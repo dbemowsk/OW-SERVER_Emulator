@@ -40,10 +40,7 @@ foreach ($devices as $device) {
         	$fam = shell_exec("owread $device/family");
 	        $temp = (!empty($fam)) ? shell_exec("owread $device/{$family[$fam]['getval']}") : "";
 		$temp = trim($temp);
-		if ($temp_unit == "F") {
-			// Convert to fahrenheit
-			//$temp = $temp * 9 / 5 + 32;
-		}
+
 		$sen = shell_exec("owread $device/r_address");
 
 		//  Create the xml code for this device
