@@ -4,7 +4,8 @@ This is a file I created based off of a perl script by jheizer found here:
 https://github.com/jheizer/MiPi-1wire/blob/master/mipi-1wire.pl
 
 I designed this to work with my Vera plus home controller using the EDS One Wire Server
-plugin for Vera.  This generates the details.xml file used for the emulation.  This can be used on a Raspberry Pi, Orange Pi, Beaglebone or any other type of server that can 
+plugin for Vera.  This generates the details.xml file used for the emulation.  This can 
+be used on a Raspberry Pi, Orange Pi, Beaglebone or any other type of server that can 
 run the 1-Wire File System (OWFS).
 
 To install:
@@ -29,3 +30,9 @@ using the instructions at http://code.mios.com/trac/mios_ow-server#no1 and enter
 address of your newly created web server device.  Remember, this requires the json.lua file
 mentioned in the above link.
 
+UPDATE:  I had issues in the UI7 version of Vera trying to add my 1-Wire sensors.  I tracked 
+the problem down to the J_OWServer.js file.  The file was trying to use a Hash object to 
+define the ajax parameters for the OWpluginRegister function.  I changed this to use a 
+standard javascript Object and updated the code to create the parameters using this Object.
+I have included the new J_OWServer.js filr in the repo.  All other files are standard to the
+EDS One Wire Server Plugin.
