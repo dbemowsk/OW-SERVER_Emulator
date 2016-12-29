@@ -26,44 +26,52 @@ $sensors = shell_exec('owdir');
 // Break the sensor list up into an array
 $devices = explode("\n", $sensors);
 
-$dt = strftime('%Y-%m-%d %H-%M', time());
-//$xml = "<a updated='$dt'>\n";
-$xml = "<Devices-Detail-Response xmlns=\"http://www/embededdatasystems.com/schema/owserver\" xmlns:xsi=\"htinstance\">\n";
-$xml = $xml . "  <DeviceName>OWServer Emulator V1</DeviceName>\n";
-$xml = $xml . "  <HostName>$hostname</HostName>\n";
+// Device counter
+$count = 0;
 
+$dt = strftime('%Y-%m-%d %H-%M', time());
+
+$devXml = "";
 
 foreach ($devices as $device) {
 	// Only take devices with a family code
 	if (strpos($device, ".") && $device != "/bus.0") {
+		$count ++;
 	        $type = shell_exec("owread $device/type");
         	$fam = shell_exec("owread $device/family");
 	        $temp = (!empty($fam)) ? shell_exec("owread $device/{$family[$fam]['getval']}") : "";
 		$temp = trim($temp);
 
+
 		$sen = shell_exec("owread $device/r_address");
 
 		//  Create the xml code for this device
-		$xml = $xml . "  <owd_$type Description=\"{$family[$fam]['description']}\">\n";
-		$xml = $xml . "    <Name>$type</Name>\n";
-		$xml = $xml . "    <Family>$fam</Family>\n";
-		$xml = $xml . "    <ROMId>$sen</ROMId>\n";
-		$xml = $xml . "    <PrimaryValue>$temp Deg $temp_unit</PrimaryValue>\n";
-		$xml = $xml . "    <Temperature Units=\"{$units[$temp_unit]}\">$temp</Temperature>\n";
-		$xml = $xml . "  </owd_$type>\n";
+		$devXml .= "  <owd_$type Description=\"{$family[$fam]['description']}\">\n";
+		$devXml .= "    <Name>$type</Name>\n";
+		$devXml .= "    <Family>$fam</Family>\n";
+		$devXml .= "    <ROMId>$sen</ROMId>\n";
+		$devXml .= "    <PrimaryValue>$temp Deg $temp_unit</PrimaryValue>\n";
+		$devXml .= "    <Temperature Units=\"{$units[$temp_unit]}\">$temp</Temperature>\n";
+		$devXml .= "  </owd_$type>\n";
 	}
 }
 
-$xml = $xml . "</Devices-Detail-Response>\n";
+$output =  "<Devices-Detail-Response xmlns=\"http://www/embededdatasystems.com/schema/owserver\" xmlns:xsi=\"htinstance\">\n";
+$output .= "  <DevicesConnected>$count</DevicesConnected>\n";
+$output .= "  <DataErrors>0</DataErrors>\n";
+$output .= "  <DeviceName>OWServer Emulator V1</DeviceName>\n";
+$output .= "  <HostName>$hostname</HostName>\n";
+$output .= $devXml;
+$output .= "</Devices-Detail-Response>\n";
 
 // Allow printing of the xml for debugging or output the details.xml file
 if (isset($argv[1]) && $argv[1] == "-d") {
 	// Debug print the generated xml
-	echo $xml;
+	echo $output;
 } else {
 	// Write the details.xml file to the webserver root folder
 	$file = "/var/www/html/details.xml";
-	file_put_contents($file, $xml);
+	file_put_contents($file, $output);
 }
 
 ?>
