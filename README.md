@@ -35,4 +35,5 @@ the problem down to the J_OWServer.js file.  The file was trying to use a Hash o
 define the ajax parameters for the OWpluginRegister function.  I changed this to use a 
 standard javascript Object and updated the code to create the parameters using this Object.
 I have included the new J_OWServer.js filr in the repo.  All other files are standard to the
-EDS One Wire Server Plugin.
+EDS One Wire Server Plugin.  You need to upload the J_OWServer.js file to your luup files to 
+replace the one from the OW-SERVER plugin.
